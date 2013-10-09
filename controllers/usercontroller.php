@@ -4,12 +4,16 @@ use Controllers\BaseController;
 
 class UserController extends BaseController {
 	
+	// private $users;
+	
 	function __construct(\Models\User $user) {
+		parent::__construct();
 		$this->user = $user;
+		$this->users = $this->db->users;
 	}
 	
 	public function createUser() {
-		$vars = $_REQUEST;
+		$vars = array_merge($_GET, $_POST);
 		
 		foreach ($vars as $key => $value) {
 			if ($key !== 'route') {
@@ -21,6 +25,14 @@ class UserController extends BaseController {
 				}
 			}
 		}
+		
+		// var_dump($this->user);
+		// var_dump($this->m);
+		
+		// var_dump($this);
+		
+		$user = array( "name" => $this->user->getName());
+		$this->users->insert($user, array("safe" => true));
 	}
 
 }

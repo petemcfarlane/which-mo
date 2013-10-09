@@ -5,10 +5,13 @@ use Views\BaseView;
 class UserView extends BaseView {
 	private $user;
 	private $userController;
+	private $users;
 	
 	public function __construct(\Controllers\UserController $userController, \Models\User $user) {
+		parent::__construct();
 		$this->user = $user;
 		$this->userController = $userController;
+		$this->users = $this->db->users;
 	}
 	
 	public function show() {
@@ -21,7 +24,11 @@ class UserView extends BaseView {
 	}
 	
 	public function index() {
-		$vars = array('');
+		$cursor = $this->users->find();
+		foreach ($cursor as $user ) {
+			$users[] = $user;
+		}
+		$vars = array('users'=>$users);
 		$this->render('user/index', $vars);
 	}
 

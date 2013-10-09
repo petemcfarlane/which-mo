@@ -10,5 +10,11 @@ class BaseController {
 	// public function createUser() {
 		// var_dump($_REQUEST);
 	// }
+	
+	public $db;
 
+	function __construct() {
+		$mongoClient = new \MongoClient();
+		$this->db = $mongoClient->movember;
+	}
 }

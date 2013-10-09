@@ -1,5 +1,5 @@
 <?php
-require 'Toro.php';
+require '3rdparty/Toro.php';
 
 use Models\User;
 use Controllers\UserController;

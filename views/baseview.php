@@ -3,6 +3,13 @@ namespace Views;
 
 class BaseView {
 
+	public $db;
+	
+	function __construct() {
+		$mongoClient = new \MongoClient();
+		$this->db = $mongoClient->movember;
+	}
+
 	function render($template, $vars, $title=null) {
 
 		foreach ($vars as $key => $value) {
