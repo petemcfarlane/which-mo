@@ -1,0 +1,1 @@
+<h1>Hello <?php print $user['name']; ?></h1>
