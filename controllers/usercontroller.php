@@ -13,26 +13,40 @@ class UserController extends BaseController {
 	}
 	
 	public function createUser() {
-		$vars = array_merge($_GET, $_POST);
+
+		$user = array(
+			"name" => $this->user->getName(),
+			"email" => $this->user->getEmail(),
+			"password" => $this->user->getPassword()
+		);
+
+		$this->users->insert($user);
+
+		$this->user->set_id( (string)$user['_id'] );
+	}
+	
+	public function updateUser() {
+
+		if ($_POST['name']) $this->user->setName($_POST['name']);
+		if ($_POST['email']) $this->user->setEmail($_POST['email']);
+		if ($_POST['password']) $this->user->setPassword($_POST['password']);
 		
-		foreach ($vars as $key => $value) {
-			if ($key !== 'route') {
-				try {
-					$set = "set" . ucfirst($key);
-					$this->user->$set($value);
-				} catch (Exception $e) {
-					Throw new Exception($e);
-				}
-			}
-		}
+		$this->db->users->update( 
+			array(
+				"_id" => new \MongoId($this->user->get_id()) ),
+			array(
+				"name" => $this->user->getName(),
+				"email" => $this->user->getEmail(),
+				"password" => $this->user->getPassword())
+		);		
+	}
+	
+	public function deleteUser() {
 		
-		// var_dump($this->user);
-		// var_dump($this->m);
-		
-		// var_dump($this);
-		
-		$user = array( "name" => $this->user->getName());
-		$this->users->insert($user, array("safe" => true));
+		$this->db->users->remove(
+			array(
+				"_id" => new \MongoId($this->user->get_id()) )
+		);
 	}
 
 }

@@ -4,10 +4,13 @@ namespace Views;
 class BaseView {
 
 	public $db;
+	public $vars = array();
 	
 	function __construct() {
 		$mongoClient = new \MongoClient();
 		$this->db = $mongoClient->movember;
+		$user = isset($_SESSION['user']['_id']) ? \getUser($_SESSION['user']['_id']) : null;
+		$this->vars['user'] = $user;	
 	}
 
 	function render($template, $vars, $title=null) {
@@ -37,8 +40,9 @@ class BaseView {
 	}
 	
 	function index() {
-		$vars = array('');
-		$this->render('index', $vars, 'Home');	
+
+		$this->render('index', $this->vars, 'Home');	
+
 	}
 	
 }
