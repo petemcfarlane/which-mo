@@ -1,5 +1,6 @@
 <?php
 namespace Handlers;
+
 use \Handlers\SeshHandler;
 
 class LogoutHandler {

@@ -1,5 +1,6 @@
 <?php 
 namespace Handlers;
+
 use \Views\BaseView;
 
 class IndexHandler {

@@ -6,7 +6,6 @@ use Controllers\UserController;
 use Views\UserView;
 use Views\BaseView;
 
-
 class UserHandler {
 
 	function get($_id=null) {
