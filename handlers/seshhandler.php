@@ -6,7 +6,7 @@ use \Views\BaseView;
 class SeshHandler {
 
 	function post() {
-		if ($_SESSION['token'] !== ($_POST['token'])) throw new Exception('Error, tokens do not match, possible CSRF attack.');
+		if ($_SESSION['token'] !== ($_POST['token'])) throw new \Exception('Error, tokens do not match, possible CSRF attack.');
 		$mongoClient = new \MongoClient();
 		$db = $mongoClient->movember;
 		$cursor = $db->users->find(array("email"=>$_POST['email'], "password"=>$_POST['password']));
@@ -17,7 +17,7 @@ class SeshHandler {
 			$_SESSION['user']['_id'] = (string)$user['_id'];
 		}
 		$redirectURL =  isset($_POST['redirectURL']) ? $_POST['redirectURL'] : '/';
-		$view = new BaseView;
+		$view = new BaseView( \getUser() );
 		$view->redirect($redirectURL);	
 	}
 

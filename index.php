@@ -3,41 +3,50 @@ error_reporting(E_ALL);
 
 session_name("movember");
 session_start();
-use Models\User;
+
+use \Models\User;
 include "./3rdparty/facebook-php-sdk/src/facebook.php";
 
-$fb = new Facebook(array(
-	"appId" => "560844070636312",
-	"secret" => "fe13c1fe8314e0c6b5c8845d142f61a7" ));
+function __autoload($class_name) {
+	$parts = explode('\\', strtolower($class_name));
+	$path = "";
+	while($parts) {
+		$path .= "/" . array_shift($parts);
+	}
+	include ".$path.php";
+}
 
-$fbUser = $fb->getUser();
-
-print "<a href='" . $fb->getLoginUrl() ."'>Login with Facebook</a>";
-
-var_dump($fbUser);
-
-// $user_profile = $fb->api('/me');
-// print_r($user_profile);
-// 
-// print '<img src="https://graph.facebook.com/' . $user . '/picture/large">';
+function getUser($user_id=null) {
+	if ($user_id === null) {
+		if ( isset($_SESSION['user']['_id']) ) {
+			$user_id = $_SESSION['user']['_id'];
+		} else {
+			$fb = new Facebook(array(
+				"appId" => "560844070636312",
+				"secret" => "fe13c1fe8314e0c6b5c8845d142f61a7" ));
+			if ( $fb->getUser() ) {
+				$mongoClient = new \MongoClient();
+				$users = $mongoClient->movember->users;
+				$fbapi = $fb->api('/me/');
+				$user = $users->findOne( array( "email" => $fbapi['email'] ) );
+				if ( !$user ) {
+					$user = array(
+						"name" => $fbapi['name'],
+						"email" => $fbapi['email'] );
+					$users->insert($user);
+				}
+				$user_id = (string)$user['_id'];
+				$_SESSION['token'] = generateToken();
+				$_SESSION['user']['_id'] = $user_id;
+			}
+		}
+	}
+	return $user_id ? new User($user_id) : null;
+}
 
 function generateToken() {
 	return base64_encode( openssl_random_pseudo_bytes(32));
 }
-
-function getUser($user_id=null) {
-	$user_id = ($user_id === null) ? $_SESSION['user']['_id'] : $user_id;
-	return new User($user_id);
-}
-// function getUserName($user=null) {
-	// $mongoClient = new \MongoClient();
-	// $db = $mongoClient->movember;
-	// $cursor = $db->users->find( array("_id"=>$user) );
-	// if (count($cursor) !== 1) throw new Exception("User with that id does not exist.");
-	// foreach ($cursor as $user) {
-		// return $user;
-	// }
-// }
 
 if ( !isset( $_SESSION['token'] ) ) $_SESSION['token'] = generateToken();
 

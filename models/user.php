@@ -18,6 +18,7 @@ class User extends BaseModel {
 			if ( !$user ) throw new \Exception("User with that id does not exist.");
 			$this->setName($user['name']);
 			$this->setEmail($user['email']);
+			$this->setPassword($user['password']);
 		}
 	}
 	

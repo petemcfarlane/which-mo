@@ -1,16 +1,18 @@
 <?php 
 namespace Views;
 
+use \Models\User;
+
 class BaseView {
 
 	public $db;
 	public $vars = array();
 	
-	function __construct() {
+	function __construct(User $user=null, $fb=null) {
 		$mongoClient = new \MongoClient();
 		$this->db = $mongoClient->movember;
-		$user = isset($_SESSION['user']['_id']) ? \getUser($_SESSION['user']['_id']) : null;
-		$this->vars['user'] = $user;	
+		$this->vars['fb'] = $fb ? $fb : null;
+		$this->vars['user'] = $user ? $user : null;
 	}
 
 	function render($template, $vars, $title=null) {

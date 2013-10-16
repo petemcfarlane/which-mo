@@ -4,7 +4,7 @@ use Controllers\BaseController;
 
 class UserController extends BaseController {
 	
-	// private $users;
+	private $users;
 	
 	function __construct(\Models\User $user) {
 		parent::__construct();
@@ -12,6 +12,7 @@ class UserController extends BaseController {
 		$this->users = $this->db->users;
 	}
 	
+
 	public function createUser() {
 
 		$user = array(
@@ -25,6 +26,7 @@ class UserController extends BaseController {
 		$this->user->set_id( (string)$user['_id'] );
 	}
 	
+
 	public function updateUser() {
 
 		if ($_POST['name']) $this->user->setName($_POST['name']);
@@ -41,6 +43,7 @@ class UserController extends BaseController {
 		);		
 	}
 	
+
 	public function deleteUser() {
 		
 		$this->db->users->remove(

@@ -2,6 +2,7 @@
 namespace Views;
 use Views\BaseView;
 use \Models\User;
+use \Controllers\UserController;
 
 class UserView extends BaseView {
 	private $show_user;
@@ -9,11 +10,12 @@ class UserView extends BaseView {
 	private $users;
 
 	
-	public function __construct(\Controllers\UserController $userController, \Models\User $show_user) {
+	public function __construct(UserController $userController, User $show_user, User $user=null) {
 		parent::__construct();
 		$this->show_user = $show_user;
 		$this->userController = $userController;
 		$this->users = $this->db->users;
+		$this->vars['user'] = $user ? $user : null;
 	}
 	
 
@@ -23,7 +25,7 @@ class UserView extends BaseView {
 			$users[] = new User($user['_id']);
 		}
 		$this->vars['users'] = $users;
-		$this->render('user/index', $this->vars);
+		$this->render('user/index', $this->vars, 'Users');
 	}
 
 

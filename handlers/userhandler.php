@@ -8,16 +8,24 @@ use Views\BaseView;
 
 class UserHandler {
 
+	private $user;
+	
+	function __construct() {
+		\ToroHook::add("before_handler", function() {
+			$this->user = getUser();
+		});
+	}
+
 	function get($_id=null) {
 		if ($_id===null) {
 			$user = new User;
 			$controller = new UserController($user);
-			$view = new UserView($controller, $user);
+			$view = new UserView($controller, $user, $this->user);
 			$view->index();
 		} else {
 			$user = new User($_id);
 			$controller = new UserController($user);
-			$view = new UserView($controller, $user);
+			$view = new UserView($controller, $user, $this->user);
 			$view->show();
 		}
 	}
@@ -37,6 +45,7 @@ class UserHandler {
 	function put($_id=null) {
 		if ($_id === null) throw new Exception('Error, user id must be set');
 		if ($_SESSION['token'] !== ($_POST['token'])) throw new Exception('Error, tokens do not match, possible CSRF attack.');
+		if ($_SESSION['user']['_id'] !== $_id) throw new Exception('Error, must be logged in as user to update yourself.');
 		$user = new User($_id);
 		$controller = new UserController($user);
 		$controller->updateUser();
@@ -47,6 +56,7 @@ class UserHandler {
 	function delete($_id=null) {
 		if ($_id === null) throw new Exception('Error, user id must be set');
 		if ($_SESSION['token'] !== ($_POST['token'])) throw new Exception('Error, tokens do not match, possible CSRF attack.');
+		if ($_SESSION['user']['_id'] !== $_id) throw new Exception('Error, must be logged in as user to delete yourself.');
 		$user = new User($_id);
 		$controller = new UserController($user);
 		$controller->deleteUser();
